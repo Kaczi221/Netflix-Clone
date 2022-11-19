@@ -1,43 +1,45 @@
-import { createContext, useContext, useEffect, useState } from "react";
-import {auth} from '../firebase';
+import { createContext, useContext, useEffect, useState } from 'react';
+import { auth } from '../firebase';
 import {
-    createUserWithEmailAndPassword,
-    signInWithEmailAndPassword,
-    signOut,
-    onAuthStateChanged
-} from 'firebase/auth'
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged,
+} from 'firebase/auth';
 
-const AuthContext = createContext()
+const AuthContext = createContext();
 
-export function AuthContextProvider({children}) {
-    const [user, setUser] = useState({})
-    
-    function signUp(email, password) {
-        return createUserWithEmailAndPassword(auth, email, password)
-    }
+export function AuthContextProvider({ children }) {
+  const [user, setUser] = useState({});
 
-    function logIn(email, password) {
-        return signInWithEmailAndPassword(auth, email, password)
-    }
+  function signUp(email, password) {
+    createUserWithEmailAndPassword(auth, email, password);
+  }
 
-    function logOut() {
-        return signOut(auth)
-    }
+  function logIn(email, password) {
+    return signInWithEmailAndPassword(auth, email, password);
+  }
 
-    useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-            setUser(currentUser)
-        })
-        return () => unsubscribe()
-    }, )
+  function logOut() {
+    return signOut(auth);
+  }
 
-    return(
-        <AuthContext.Provider value={{signUp, logIn, logOut, user}}>
-            {children}
-        </AuthContext.Provider>
-    )
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+    });
+    return () => {
+      unsubscribe();
+    };
+  });
+
+  return (
+    <AuthContext.Provider value={{ signUp, logIn, logOut, user }}>
+      {children}
+    </AuthContext.Provider>
+  );
 }
 
 export function UserAuth() {
-    return useContext(AuthContext)
+  return useContext(AuthContext);
 }
