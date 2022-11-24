@@ -1,6 +1,22 @@
-import React from 'react'
-import {Link} from 'react-router-dom'
+import React, {useState} from 'react'
+import {Link, useNavigate} from 'react-router-dom'
+import { UserAuth } from '../context/AuthContext';
 const Login = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const { user, logIn } = UserAuth();
+  const navigate = useNavigate()
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await logIn(email, password);
+      navigate('/')
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <>
       <div className='w-full h-screen'>
@@ -12,9 +28,9 @@ const Login = () => {
           <div className='max-w-[450px] h-[600px] mx-auto bg-black/75 text-white'>
             <div className='max-w-[320px] mx-auto py-16'>
               <h1 className='text-3xl font-bold'>Sign In</h1>
-              <form className='flex  w-full flex-col py-4'>
-                <input className='rounded p-3 my-2 bg-gray-600' type="email" placeholder='E-mail' />
-                <input className='rounded p-3 my-2 bg-gray-600' type="password" placeholder='Password' />
+              <form onSubmit={handleSubmit} className='flex  w-full flex-col py-4'>
+                <input onChange={(e) => (setEmail(e.target.value))} className='rounded p-3 my-2 bg-gray-600' type="email" placeholder='E-mail' />
+                <input onChange={(e) => (setPassword(e.target.value))} className='rounded p-3 my-2 bg-gray-600' type="password" placeholder='Password' />
                 <button className='rounded bg-red-600 py-3 my-6 font-bold'>Sign Up</button>
                 <div className='flex justify-between items-center'>
                   <p ><input type="checkbox" className='mr-2' />Remember me</p>
